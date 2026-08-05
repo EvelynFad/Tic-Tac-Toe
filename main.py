@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QMenu, QWidget, QLabel, QStatusBar
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from PyQt6.QtWidgets import QMessageBox
 from PyQt6.QtGui import QAction
 from PyQt6 import uic
 import numpy as np
@@ -51,7 +52,7 @@ class Window(QMainWindow):
         self.__free = True
 
         # Добавление текста сообщения в строку состояния
-        self.__Message = QLabel("Игра началась")
+        self.__Message = QLabel("The game has started....")
         self.StatusBar.addWidget(self.__Message)
 
         # Связка кнопок
@@ -73,11 +74,11 @@ class Window(QMainWindow):
         # Конкретная кнопка, которую нажали в меню
         text = action.text()
         # Если этой кнопкой оказалась "Новая игра"
-        if text == "Новая игра":
+        if text == "New game":
             self.__clear()                  # Очищаем поле
             self.Field.setEnabled(True)     # Разблокируем поле
         # Если этой кнопкой оказалась "Выход"
-        elif text == "Выход":
+        elif text == "Exit":
             self.close()                    # Закрываем окно
 
     # Очистка поля
@@ -102,7 +103,8 @@ class Window(QMainWindow):
         # Установка хода
         self.__move = True
         # Изменение текста на строке состояния
-        self.__Message.setText("Игра началась")
+        QMessageBox.warning(None, "Game", "The game has started!")
+        self.__Message.setText("The game has started!")
 
     # Обработка нажатия кнопки
     def __onClick_Button(self, button: QPushButton, index_x: int, index_y: int):
@@ -121,22 +123,26 @@ class Window(QMainWindow):
         for line in self.__field:
             # Если в одной строке 3 крестика подряд
             if list(line).count(1) == 3:
-                self.__Message.setText("Выиграли крестики")     # Меняем текст в строке состояния
-                self.Field.setEnabled(False)                    # Блокируем поле
+                QMessageBox.information(None, "Game", "Crosses has won!")
+                self.__Message.setText("Crosses has won!")
+                self.Field.setEnabled(False)
             # Если в одной строке 3 нолика подряд
             if list(line).count(2) == 3:
-                self.__Message.setText("Выиграли нолики")       # Меняем текст в строке состояния
-                self.Field.setEnabled(False)                    # Блокируем поле
+                self.__Message.setText("Zeros has won!")
+                QMessageBox.information(None, "Game", "Zeros has won!")
+                self.Field.setEnabled(False)
 
         for line in self.__field.transpose():
             # Если в одной строке 3 крестика подряд
             if list(line).count(1) == 3:
-                self.__Message.setText("Выиграли крестики")     # Меняем текст в строке состояния
-                self.Field.setEnabled(False)                    # Блокируем поле
+                QMessageBox.information(None, "Game", "Crosses has won!")
+                self.__Message.setText("Crosses has won!")
+                self.Field.setEnabled(False)
             # Если в одной строке 3 нолика подряд
             if list(line).count(2) == 3:
-                self.__Message.setText("Выиграли нолики")       # Меняем текст в строке состояния
-                self.Field.setEnabled(False)                    # Блокируем поле
+                self.__Message.setText("Zeros has won!")
+                QMessageBox.information(None, "Game", "Zeros has won!")
+                self.Field.setEnabled(False)
 
         # Проверка на выигрыш/проигрыш по диагонали
         Diag_1, Diag_2 = [], []
@@ -147,16 +153,20 @@ class Window(QMainWindow):
 
         # Проверка с помощью счёта нулей/крестиков
         if Diag_1.count(1) == 3:
-            self.__Message.setText("Выиграли крестики")
+            QMessageBox.information(None, "Game", "Crosses has won!")
+            self.__Message.setText("Crosses has won!")
             self.Field.setEnabled(False)
         if Diag_2.count(1) == 3:
-            self.__Message.setText("Выиграли крестики")
+            self.__Message.setText("Crosses has won!")
+            QMessageBox.information(None, "Game", "Crosses has won!")
             self.Field.setEnabled(False)
         if Diag_1.count(2) == 3:
-            self.__Message.setText("Выиграли нолики")
+            self.__Message.setText("Zeros has won!")
+            QMessageBox.information(None, "Game", "Zeros has won!")
             self.Field.setEnabled(False)
         if Diag_2.count(2) == 3:
-            self.__Message.setText("Выиграли нолики")
+            self.__Message.setText("Zeros has won!")
+            QMessageBox.information(None, "Game", "Zeros has won!")
             self.Field.setEnabled(False)
 
         # Проверка на ничью
@@ -168,7 +178,8 @@ class Window(QMainWindow):
                 self.__free = True          # Меняем значение переменной
         # Если после этого переменная осталась отрицательной
         if not self.__free:
-            self.__Message.setText("Ничья!")        # Меняем текст в строке состояния
+            self.__Message.setText("It's a tie!")        # Меняем текст в строке состояния
+            QMessageBox.information(None, "Game", "It's a tie!")
             self.Field.setEnabled(False)            # Блокируем поле
 
     # Обработка нажатия кнопок

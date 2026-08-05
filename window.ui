@@ -16,25 +16,25 @@
   <widget class="QWidget" name="Field">
    <property name="styleSheet">
     <string notr="true">QWidget{
-	background: #E78895;
+	background: #F8B2B2;
 }
 
 QPushButton{
-	background: #FFF7F1;
-	color: rgb(70, 102, 107);
-	border-radius: 15px
+	background: #FDE9E3;
+	color: #e67e7e;
+	border-radius: 30px
 }
 
 QPushButton:hover{
 	background: #F7E3DD;
-	color: rgb(47, 69, 71);
-	border-radius: 15px
+	color: #e67e7e;
+	border-radius: 60px
 }
 
 QPushButton:pressed{
 	background: #F7C8BF;
-	color: rgb(206, 239, 239);
-	border-radius: 15px
+	color: #e67e7e;
+	border-radius: 60px
 }</string>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -277,20 +277,19 @@ QPushButton:pressed{
      <x>0</x>
      <y>0</y>
      <width>653</width>
-     <height>28</height>
+     <height>27</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Segoe UI Variable Display Light</family>
-     <pointsize>10</pointsize>
-     <weight>50</weight>
+     <family>Arial</family>
+     <pointsize>14</pointsize>
      <bold>false</bold>
     </font>
    </property>
    <property name="styleSheet">
     <string notr="true">QMenuBar{
-	background: #D48597;
+	background: #F8B2B2;
 }
 </string>
    </property>
@@ -301,14 +300,14 @@ QPushButton:pressed{
      </font>
     </property>
     <property name="title">
-     <string>Игра</string>
+     <string>Game</string>
     </property>
     <addaction name="B_NewGame"/>
     <addaction name="B_Exit"/>
    </widget>
    <widget class="QMenu" name="M_FAO">
     <property name="title">
-     <string>Справка</string>
+     <string>Help</string>
     </property>
    </widget>
    <addaction name="M_Game"/>
@@ -317,16 +316,17 @@ QPushButton:pressed{
   <widget class="QStatusBar" name="StatusBar">
    <property name="font">
     <font>
-     <family>Segoe UI Variable Display Light</family>
+     <family>Arial</family>
+     <pointsize>12</pointsize>
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">background: #D48597;</string>
+    <string notr="true">background: #F8B2B2;</string>
    </property>
   </widget>
   <action name="B_NewGame">
    <property name="text">
-    <string>Новая игра</string>
+    <string>New game</string>
    </property>
    <property name="font">
     <font>
@@ -336,7 +336,7 @@ QPushButton:pressed{
   </action>
   <action name="B_Exit">
    <property name="text">
-    <string>Выход</string>
+    <string>Exit</string>
    </property>
    <property name="font">
     <font>
