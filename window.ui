@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Крестики-нолики</string>
+   <string>Tic tac toe</string>
   </property>
   <widget class="QWidget" name="Field">
    <property name="styleSheet">
