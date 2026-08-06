@@ -8,10 +8,9 @@ import random
 import sys
 
 
-# Класс окна
+# Window class
 class Window(QMainWindow):
-
-    # Магия для подсказок с функциями
+    # Type Annotation
     StatusBar: QStatusBar
     __Message = QLabel
 
@@ -30,40 +29,39 @@ class Window(QMainWindow):
 
     Field: QWidget
 
-    # Конструктор
+    # Constructor
     def __init__(self):
         super(Window, self).__init__()
         uic.loadUi("window.ui", self)
 
-        # Создание массива с игровым полем
+        # Game field
         self.__field = np.array([
             [0, 0, 0],
             [0, 0, 0],
             [0, 0, 0]])
-
-        # Переменная для смены хода
-        self.__move = True
-
-        # Переменная свободного места
-        self.__free = True
-
-        # включён ли бот
-        self.__bot = True
-        # бот играет ноликами
-        self.__bot_symbol = 2
-
-        # Список кнопок
+        # Game buttons field
         self.__buttons = [
             [self.B_7, self.B_8, self.B_9],
             [self.B_4, self.B_5, self.B_6],
             [self.B_1, self.B_2, self.B_3]
         ]
 
-        # Добавление текста сообщения в строку состояния
+        # Change moves (crosses and zeros)
+        self.__move = True
+
+        # Is there empty places
+        self.__free = True
+
+        # Bot mode flag
+        self.__bot = True
+        # Bot is playing with zeros
+        self.__bot_symbol = 2
+
+        # Adding text to status bar
         self.__Message = QLabel("The game has started....")
         self.StatusBar.addWidget(self.__Message)
 
-        # Связка кнопок
+        # Connecting buttons
         self.B_1.clicked.connect(self.__onClick_B1)
         self.B_2.clicked.connect(self.__onClick_B2)
         self.B_3.clicked.connect(self.__onClick_B3)
@@ -74,77 +72,78 @@ class Window(QMainWindow):
         self.B_8.clicked.connect(self.__onClick_B8)
         self.B_9.clicked.connect(self.__onClick_B9)
 
-        # Связка меню
+        # Connecting menu
         self.M_Game.triggered.connect(self.__onClick_Menu)
         self.M_FAO.triggered.connect(self.__onClick_Menu)
 
-    # Обработка нажатия меню
+    # Clicking menu
     def __onClick_Menu(self, action: QAction):
-        # Конкретная кнопка, которую нажали в меню
+        # Button that was clicked
         text = action.text()
-        # Если этой кнопкой оказалась "Новая игра"
+        # If this button turned out to be "New game"
         if text == "New game":
             self.__modeChoiceWindow()
-        # Если этой кнопкой оказалась "Выход"
+        # If this button turned out to be "Exit"
         elif text == "Exit":
-            self.close() # Закрываем окно
+            self.close()    # Closing window
+        # If this button turned out to be "Help"
         elif text == "Help": QMessageBox.about(self, "Help", "No one will help you")
 
-    # Метод для бота
+    # Method for bot
     def __botMove(self):
-        # Поиск всех свободных мест
+        # Searching for free place
         free = []
         for i in range(3):
             for j in range(3):
                 if self.__field[i][j] == 0:
                     free.append((i, j))
 
-        # Если свободного места нет -> ничего не делать
+        # If there isn't any free place -> do not do anything
         if len(free) == 0:
             return
 
-        # Случайный выбор координат
+        # Randomized coordinates choice
         x, y = random.choice(free)
-
-        # Кнопка, соответствующая этим координатам
         button = self.__buttons[x][y]
 
-        # Нажатие этой кнопки
+        # Clicking this button
         self.__onClick_Button(button, x, y)
 
-    # Диалоговое окно с выбором режима
+    # Window with mode choice
     def __modeChoiceWindow(self):
+        # Creating message box
         msg_box = QMessageBox(self)
         msg_box.setWindowTitle("Mode selection")
         msg_box.setText("In what mode would you like to play?")
         msg_box.setIcon(QMessageBox.Icon.Question)
 
-        # Добавляем кастомные кнопки с нужным текстом
+        # Custom buttons
         btn_user = msg_box.addButton("On my PC", QMessageBox.ButtonRole.AcceptRole)
         btn_bot = msg_box.addButton("With a bot", QMessageBox.ButtonRole.AcceptRole)
         btn_cancel = msg_box.addButton("Cancel", QMessageBox.ButtonRole.RejectRole)
 
-        # Отображаем окно (программа ждет ответа — это нормальное поведение exec())
+        # Displaying window
         msg_box.exec()
 
-        # Проверяем, какая именно кнопка была нажата
+        # Clicked button
         clicked_button = msg_box.clickedButton()
 
+        # Changing modes
         if clicked_button == btn_bot:
             self.__bot = True
-            self.__clear()  # Очищаем поле
-            self.Field.setEnabled(True)  # Разблокируем поле
+            self.__clear()               # Clearing field
+            self.Field.setEnabled(True)  # Disabling field
         elif clicked_button == btn_user:
             self.__bot = False
-            self.__clear()  # Очищаем поле
-            self.Field.setEnabled(True)  # Разблокируем поле
+            self.__clear()               # Clearing field
+            self.Field.setEnabled(True)  # Enabling field
+        # Closing window
         else:
-            # Нажата кнопка Cancel или окно закрыли на крестик
-            print("Действие отменено")
+            print("Action was cancelled")
 
-    # Очистка поля
+    # Field clearance
     def __clear(self):
-        # Удаление ноликов и крестиков
+        # Removing crosses and zeros
         self.B_1.setText("")
         self.B_2.setText("")
         self.B_3.setText("")
@@ -155,103 +154,119 @@ class Window(QMainWindow):
         self.B_8.setText("")
         self.B_9.setText("")
 
-        # Очистка массива поля
+        # Clearing matrix of field
         self.__field = np.array([
             [0, 0, 0],
             [0, 0, 0],
             [0, 0, 0]])
 
-        # Установка хода
+        # Enabling move
         self.__move = True
-        # Изменение текста на строке состояния
+        # Changing text in status bar
         QMessageBox.warning(None, "Game", "The game has started!")
         self.__Message.setText("The game has started!")
 
-    # Обработка нажатия кнопки
-    def __onClick_Button(self, button: QPushButton, index_x: int, index_y: int):
-        # Если ход крестиков и эта кнопка свободна
-        if self.__move and button.text() == "":
-            button.setText("X")                         # Ставим крестик
-            self.__field[index_x][index_y] = 1          # Меняем значение в массиве поля
-            self.__move = not self.__move               # Меняем ход
-
-            # Ход бота, если это его ход
-            if self.__bot and not self.__move:
-                self.__botMove()
-        # Если ход ноликов и эта кнопка свободна
-        elif not self.__move and button.text() == "":
-            button.setText("O")                         # Ставим нолик
-            self.__move = not self.__move               # Меняем ход
-            self.__field[index_x][index_y] = 2          # Меняем значение в массиве поля
-
-            # Ход бота, если это его ход
-            if self.__bot and not self.__move:
-                self.__botMove()
-
-        # Проверка на выигрыш/проигрыш в одну строку
+    # Check for zeros' win
+    def __checkZeroWin(self):
+        # 0 0 0
         for line in self.__field:
-            # Если в одной строке 3 крестика подряд
-            if list(line).count(1) == 3:
-                #QMessageBox.information(None, "Game", "Crosses has won!")
-                self.__Message.setText("Crosses has won!")
-                self.Field.setEnabled(False)
             # Если в одной строке 3 нолика подряд
             if list(line).count(2) == 3:
-                self.__Message.setText("Zeros has won!")
-                #QMessageBox.information(None, "Game", "Zeros has won!")
-                self.Field.setEnabled(False)
-
+                return True
+        # 0
+        # 0
+        # 0
         for line in self.__field.transpose():
-            # Если в одной строке 3 крестика подряд
-            if list(line).count(1) == 3:
-                #QMessageBox.information(None, "Game", "Crosses has won!")
-                self.__Message.setText("Crosses has won!")
-                self.Field.setEnabled(False)
             # Если в одной строке 3 нолика подряд
             if list(line).count(2) == 3:
-                self.__Message.setText("Zeros has won!")
-                #QMessageBox.information(None, "Game", "Zeros has won!")
-                self.Field.setEnabled(False)
+                return True
 
-        # Проверка на выигрыш/проигрыш по диагонали
+        # Diagonal win
         Diag_1, Diag_2 = [], []
-        # Добавляем в переменные значения диагоналей
         for id in range(3):
             Diag_1.append(self.__field[id][id])
-            Diag_2.append(self.__field[id][2-id])
+            Diag_2.append(self.__field[id][2 - id])
 
-        # Проверка с помощью счёта нулей/крестиков
-        if Diag_1.count(1) == 3:
-            #QMessageBox.information(None, "Game", "Crosses has won!")
-            self.__Message.setText("Crosses has won!")
-            self.Field.setEnabled(False)
-        if Diag_2.count(1) == 3:
-            self.__Message.setText("Crosses has won!")
-            #QMessageBox.information(None, "Game", "Crosses has won!")
-            self.Field.setEnabled(False)
-        if Diag_1.count(2) == 3:
-            self.__Message.setText("Zeros has won!")
-            #QMessageBox.information(None, "Game", "Zeros has won!")
-            self.Field.setEnabled(False)
-        if Diag_2.count(2) == 3:
-            self.__Message.setText("Zeros has won!")
-            #QMessageBox.information(None, "Game", "Zeros has won!")
-            self.Field.setEnabled(False)
+        if Diag_1.count(2) == 3 or Diag_2.count(2) == 3:
+            return True
 
-        # Проверка на ничью
-        self.__free = False                 # Устанавливаем значение переменной
-        # Перебор линий на поле
+        return False
+
+
+    # Check for crosses' win
+    def __checkCrossWin(self):
+        # X X X
         for line in self.__field:
-            # Если присутствует свободное место
+            if list(line).count(1) == 3:
+                return True
+
+        # X
+        # X
+        # X
+        for line in self.__field.transpose():
+            if list(line).count(1) == 3:
+                return True
+
+        # Diagonal win
+        Diag_1, Diag_2 = [], []
+        for id in range(3):
+            Diag_1.append(self.__field[id][id])
+            Diag_2.append(self.__field[id][2 - id])
+
+        if Diag_1.count(1) == 3 or Diag_2.count(1) == 3:
+            return True
+
+        return False
+
+    # Check for a tie
+    def __checkTie(self):
+        self.__free = False
+        # Checking every line on the field
+        for line in self.__field:
+            # If there's empty place
             if 0 in line:
-                self.__free = True          # Меняем значение переменной
-        # Если после этого переменная осталась отрицательной
-        if not self.__free:
+                self.__free = True  # Changing flag
+
+        return not self.__free
+
+    # Clicking button
+    def __onClick_Button(self, button: QPushButton, index_x: int, index_y: int):
+        # If it's crosses' move
+        if self.__move and button.text() == "":
+            button.setText("X")                         # Putting cross
+            self.__field[index_x][index_y] = 1          # Changing it in matrix
+            self.__move = not self.__move               # Changing move
+
+            # Bot's move
+            if self.__bot and not self.__move:
+                self.__botMove()
+        # If it's zeros' move
+        elif not self.__move and button.text() == "":
+            button.setText("O")                         # Putting zero
+            self.__move = not self.__move               # Changing move
+            self.__field[index_x][index_y] = 2          # Changing it in matrix
+
+            # Bot's move
+            if self.__bot and not self.__move:
+                self.__botMove()
+
+        # Check for zeros' win
+        if self.__checkZeroWin():
+            self.__Message.setText("Zeros has won!")
+            # QMessageBox.information(None, "Game", "Zeros has won!")
+            self.Field.setEnabled(False)
+        # Check for crosses' win
+        if self.__checkCrossWin():
+            # QMessageBox.information(None, "Game", "Crosses has won!")
+            self.__Message.setText("Crosses has won!")
+            self.Field.setEnabled(False)
+        # Check for a tie
+        if self.__checkTie():
             self.__Message.setText("It's a tie!")        # Меняем текст в строке состояния
             #QMessageBox.information(None, "Game", "It's a tie!")
             self.Field.setEnabled(False)            # Блокируем поле
 
-    # Обработка нажатия кнопок
+    # Clicking buttons
     def __onClick_B1(self):
         self.__onClick_Button(self.B_1, 2, 0)
 
@@ -279,15 +294,15 @@ class Window(QMainWindow):
     def __onClick_B9(self):
         self.__onClick_Button(self.B_9, 0, 2)
 
-# Основная функция
+# Main function
 def Main():
-    # Запуск QT ядра
+    # Qt core
     app = QApplication([])
-    # Окно
+    # Window
     window = Window()
-    # Открытие окна
+    # Opening window
     window.show()
-    # Запуск
+    # Start
     app.exec()
 
 
