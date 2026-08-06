@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QMenu, QWidget, QLabel, QStatusBar
-from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from PyQt6.QtCore import pyqtSignal, pyqtSlot, QUrl
 from PyQt6.QtWidgets import QMessageBox
+from PyQt6.QtMultimedia import QSoundEffect
 from PyQt6.QtGui import QAction
 from PyQt6 import uic
 import numpy as np
@@ -75,6 +76,15 @@ class Window(QMainWindow):
         # Connecting menu
         self.M_Game.triggered.connect(self.__onClick_Menu)
         self.M_FAO.triggered.connect(self.__onClick_Menu)
+
+        # Sound effects
+        self.__clickSound = QSoundEffect()
+        self.__clickSound.setSource(QUrl.fromLocalFile("sounds/mouseClick.wav"))
+        self.__clickSound.setVolume(0.2)
+
+        self.__winSound = QSoundEffect()
+        self.__winSound.setSource(QUrl.fromLocalFile("sounds/victory.wav"))
+        self.__winSound.setVolume(0.9)
 
     # Clicking menu
     def __onClick_Menu(self, action: QAction):
@@ -233,6 +243,7 @@ class Window(QMainWindow):
     def __onClick_Button(self, button: QPushButton, index_x: int, index_y: int):
         # If it's crosses' move
         if self.__move and button.text() == "":
+            self.__clickSound.play()
             button.setText("X")                         # Putting cross
             self.__field[index_x][index_y] = 1          # Changing it in matrix
             self.__move = not self.__move               # Changing move
@@ -242,6 +253,7 @@ class Window(QMainWindow):
                 self.__botMove()
         # If it's zeros' move
         elif not self.__move and button.text() == "":
+            self.__clickSound.play()
             button.setText("O")                         # Putting zero
             self.__move = not self.__move               # Changing move
             self.__field[index_x][index_y] = 2          # Changing it in matrix
@@ -252,11 +264,15 @@ class Window(QMainWindow):
 
         # Check for zeros' win
         if self.__checkZeroWin():
+            self.__winSound.play()
+
             self.__Message.setText("Zeros has won!")
             # QMessageBox.information(None, "Game", "Zeros has won!")
             self.Field.setEnabled(False)
         # Check for crosses' win
         if self.__checkCrossWin():
+            self.__winSound.play()
+
             # QMessageBox.information(None, "Game", "Crosses has won!")
             self.__Message.setText("Crosses has won!")
             self.Field.setEnabled(False)
